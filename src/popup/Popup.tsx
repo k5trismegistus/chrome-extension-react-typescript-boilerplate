@@ -1,11 +1,19 @@
-import React, { useEffect } from "react";
-import "./Popup.scss";
+import React, { useEffect, useState } from "react"
+import "./Popup.scss"
 
-export default function Popup() {
+const Popup = ({currentTab}) => {
   useEffect(() => {
-    // Example of how to send a message to eventPage.ts.
-    chrome.runtime.sendMessage({ popupMounted: true });
-  }, []);
+    chrome.runtime.sendMessage({ popupMounted: true })
+  }, [])
 
-  return <div className="popupContainer">Hello, world!</div>;
+  return <div className="popupContainer">
+    <p>
+      {currentTab.title}
+    </p>
+    <p>
+      {currentTab.url}
+    </p>
+  </div>
 }
+
+export default Popup
