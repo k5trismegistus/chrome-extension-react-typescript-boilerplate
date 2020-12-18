@@ -1,38 +1,47 @@
-import React, { useEffect, useState } from "react"
+import { Bookmark } from '../types'
+
+import React, { useEffect, useState, FC } from "react"
 import "./Popup.scss"
 
-const Popup = ({currentUrl, currentTitle}) => {
-  const [bookmarksCurrentHost, setBookmarksCurrentHost] = useState([])
+import { BookmarkList } from '../components/BookmarkList'
+
+import {
+  fetchBookmarkDomain,
+  fetchBookmarkByDomain,
+  addBookmark,
+} from '../utils/bookmarkUtils'
+
+interface IPopup {
+  currentTabUrl: URL,
+  currentTabTitle: String,
+}
+
+const Popup: FC<IPopup> = ({currentTabUrl, currentTabTitle}) => {
+  const [formTitle, setFormTitle] = useState(currentTabTitle)
+  const [formUrl, setFormUrl] = useState(currentTabUrl)
+
+  const [bookmarks, setBookmarks] = useState([])
   useEffect(() => {
-    chrome.storage.sync.get([currentUrl.host], (result) => {
-      setBookmarksCurrentHost(result[currentUrl.host])
-    })
+    (async () => {
+      const currentDomainBookmarks = await fetchBookmarkByDomain(currentTabUrl.host)
+      setBookmarks(currentDomainBookmarks)
+    })()
 
     chrome.runtime.sendMessage({ popupMounted: true })
   }, [])
 
-  const addCurrentPage = () => {
-    chrome.storage.sync.get([currentUrl.host], (result) => {
-      const currentBookmark = result[currentUrl.host] ? result[currentUrl.host] : []
-      currentBookmark.push({title: currentTitle, url: currentUrl.toString()})
-      chrome.storage.sync.set({[currentUrl.host]: currentBookmark })
-    })
+  const addCurrentPage = async () => {
+    const currentDomainBookmarks = await addBookmark(formTitle, formUrl)
+    setBookmarks(currentDomainBookmarks)
   }
 
   return <div className="popupContainer">
-    {bookmarksCurrentHost.map((bm) => (
-      <div>
-        <p>
-          {bm.title}
-        </p>
-        <p>
-          {bm.url}
-        </p>
-      </div>
-    ))}
+    <BookmarkList
+      bookmarks={bookmarks}
+    />
 
-    <button onClick={() => addCurrentPage()}>Add current page</button>
+    <button onClick={addCurrentPage}>Add current page</button>
   </div>
 }
 
-export default Popup
+export { Popup }

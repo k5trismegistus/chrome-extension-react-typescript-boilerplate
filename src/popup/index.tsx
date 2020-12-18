@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import Popup from './Popup'
+import { Popup } from './Popup'
 
 chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
     const currentTab = tabs[0]
@@ -10,8 +10,8 @@ chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
 
     ReactDOM.render(
         <Popup
-            currentUrl={url}
-            currentTitle={title}
+            currentTabUrl={url}
+            currentTabTitle={title}
         />
     , document.getElementById('popup'))
 })
