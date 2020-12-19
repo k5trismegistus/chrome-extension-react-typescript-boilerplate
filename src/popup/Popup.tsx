@@ -36,7 +36,7 @@ const Popup: FC<IPopup> = ({currentTabUrl, currentTabTitle}) => {
       const bookmarked = await isBookmarked(currentTabUrl)
       console.log(bookmarked)
       setIsCurrentPageBookmarked(bookmarked)
-    })
+    })()
   })
 
 
