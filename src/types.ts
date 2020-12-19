@@ -1,5 +1,5 @@
 type Bookmark = {
-  title: String
+  title: string
   url: URL
 }
 
